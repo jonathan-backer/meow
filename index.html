@@ -170,8 +170,16 @@ body {
 <body>
 
   <h1>
-    <div id="txt">
-      0
+    <div> 
+      <div style="display:inline"> Timer: </div>
+      <div id="txt" style="display:inline"> 0 </div>
+    </div>
+  </h1>
+
+    <h1>
+    <div> 
+      <div style="display:inline"> Meows: </div>
+      <div id="meows" style="display:inline"> 0 </div>
     </div>
   </h1>
 
@@ -191,13 +199,22 @@ body {
   <script>
     const meow_delay_sec = 60;
 
+    function getMeows() {
+	return parseInt(document.getElementById('meows').innerHTML);
+    }
+
+    function setMeows(i) {
+	document.getElementById('meows').innerHTML = i;
+    }
+    setMeows(0);
+
     function setCounter(i) {
 	document.getElementById('txt').innerHTML = i;
     }
     setCounter(0);
 
     function getCounter() {
-	return (document.getElementById('txt').innerHTML);
+	return parseInt(document.getElementById('txt').innerHTML);
     }
 
     function countDown() {
@@ -236,6 +253,7 @@ body {
 		var audio = document.getElementById("meow");
 		audio.play();
 		setCounter(meow_delay_sec);
+		setMeows(getMeows() + 1);
             }
             setTimeout(tick, 1000 /* millis */ );
 	}

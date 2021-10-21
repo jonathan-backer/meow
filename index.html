@@ -125,7 +125,10 @@ PxYXFaxUWaoWFxWsVFsWF2YqLYsLs////WKNxZmsUbizNYo3FhXFRRuLCv/zeFTWDXTHEgBhIxIa
 /////////////////////////////////////////////w=="></audio>
 <style>
 body {
-  font-family: Arial, Helvetica, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 24px;
+    text-align: center;
+    width: 150px;
 }
 
 .flip-box {
@@ -136,65 +139,82 @@ body {
 }
 
 .flip-box-inner {
-  position: relative;
   width: 100%;
   height: 100%;
-  text-align: center;
   transition: transform 0.8s;
   transform-style: preserve-3d;
-  display: table;
 }
 
 .flip-box-front, .flip-box-back {
+  border-radius: 25px;
   position: absolute;
   width: 100%;
   height: 100%;
-  -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  display: table-cell;
-  vertical-align: middle;
+  display: table;
 }
 
 .flip-box-front {
   background-color: #06d13c;
-  color: black;
 }
 
 .flip-box-back {
   background-color: #d12406;
-  color: black;
   transform: rotateY(180deg);
 }
+
+.text {
+  color: black;
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.reset-button {
+  display: table;
+  width: 150px;
+  height: 60px;
+  border-radius: 25px;
+  background-color: lightblue;
+}
+
+#div { border:1px solid green;}
+
 </style>
 </head>
 <body>
 
-  <h1>
+    <div id="reset-button" class="reset-button">
+      <div class="text">
+        RESET
+      </div>
+    </div>
+    
+    <br>
     <div> 
       <div style="display:inline"> Timer: </div>
       <div id="txt" style="display:inline"> 0 </div>
     </div>
-  </h1>
-
-    <h1>
     <div> 
       <div style="display:inline"> Meows: </div>
       <div id="meows" style="display:inline"> 0 </div>
     </div>
-  </h1>
+    <br>
 
-  <h1>
-    <div id="my-flip-box" class="flip-box">
+    <div class="flip-box">
       <div id="my-flip-box-inner" class="flip-box-inner">
 	<div id="start" class="flip-box-front">
-	  START
+	  <div class="text">
+            START
+          </div>
 	</div>
 	<div id="stop" class="flip-box-back">
-	  STOP
+	  <div class="text">
+            STOP
+          </div>
 	</div>
       </div>
     </div>
-  </h1>
 
   <script>
     const meow_delay_sec = 60;
@@ -211,7 +231,7 @@ body {
     function setCounter(i) {
 	document.getElementById('txt').innerHTML = i;
     }
-    setCounter(0);
+    setCounter(meow_delay_sec);
 
     function getCounter() {
 	return parseInt(document.getElementById('txt').innerHTML);
@@ -227,6 +247,22 @@ body {
     }
 
     var wakeLock = null;
+    var timerID = null;
+    function stopTimer() {
+        document.getElementById("my-flip-box-inner").style.transform = "";
+    	wakeLock = null;
+        if (timerID != null) {
+            clearTimeout(timerID);
+            timerID = null;
+        }
+    }
+
+    document.getElementById("reset-button").onclick = async() => {
+        stopTimer();
+        setCounter(meow_delay_sec);
+        setMeows(0);
+    }
+
     document.getElementById("my-flip-box-inner").onclick = async() => {
 	if (!started()) {
 	    document.getElementById("my-flip-box-inner").style.transform = "rotateY(180deg)";
@@ -236,13 +272,10 @@ body {
 		} catch(e) {
 		    wakeLock = 1;
 		}
-		setCounter(meow_delay_sec + 1); /* tick() will decrement immediately */
 		tick();
 	    }
 	} else {
-            document.getElementById("my-flip-box-inner").style.transform = "";
-	    wakeLock = null;
-	    setCounter(0);
+            stopTimer();
 	}
     }
 
@@ -255,8 +288,10 @@ body {
 		setCounter(meow_delay_sec);
 		setMeows(getMeows() + 1);
             }
-            setTimeout(tick, 1000 /* millis */ );
-	}
+            timerID = setTimeout(tick, 1000 /* millis */ );
+	} else {
+            timerID = null;
+        }
     }
 
   </script>
